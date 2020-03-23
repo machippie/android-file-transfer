@@ -1,0 +1,16 @@
+# Standards: 0.1
+---
+- name: Kill android-file-transfer
+  command: killall Android\ File\ Transfer
+  register: android_file_transfer_kill
+  failed_when: android_file_transfer_kill.rc != 0 and "No matching processes belonging to you were found" not in android_file_transfer_kill.stderr
+  become: "{{ (android_file_transfer_user != ansible_user_id) | bool }}"
+  become_user: "{{ android_file_transfer_user }}"
+
+- name: Start android-file-transfer
+  when: android_file_transfer_started
+  command: open -g /Applications/Android\ File\ Transfer.app
+  become: "{{ (android_file_transfer_user != ansible_user_id) | bool }}"
+  become_user: "{{ android_file_transfer_user }}"
+
+...

@@ -1,0 +1,10 @@
+# Standards: 0.1
+---
+# @var android_file_transfer_user:description: User to run user-specific commands
+# @var android_file_transfer_user:value: android_file_transfer_user | default(homebrew_user) | default(ansible_user_id)
+# android_file_transfer_user:
+
+# @var android_file_transfer_started:description: Start in background after install
+android_file_transfer_started: True
+
+...

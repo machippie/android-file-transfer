@@ -1,0 +1,31 @@
+# Standards: 0.1
+---
+- name: Fact android-file-transfer user
+  set_fact:
+    android_file_transfer_user: "{{ android_file_transfer_user | default(homebrew_user) | default(ansible_user_id) }}"
+  tags:
+    - android-file-transfer
+
+- become: "{{ (android_file_transfer_user != ansible_user_id) | bool }}"
+  become_user: "{{ android_file_transfer_user }}"
+  block:
+    - name: Install required package
+      ignore_errors: True
+      homebrew_cask:
+        name: android-file-transfer
+        greedy: True
+        options: appdir=/Applications
+        accept_external_apps: False
+        state: upgraded
+      tags:
+        - android-file-transfer
+
+- name: Remove quarantine flag
+  register: android_file_transfer_quarantine
+  failed_when: android_file_transfer_quarantine.rc != 0 and "No such xattr" not in android_file_transfer_quarantine.stderr
+  changed_when: android_file_transfer_quarantine.rc == 0
+  command: xattr -d com.apple.quarantine /Applications/Android\ File\ Transfer.app
+  tags:
+    - android-file-transfer
+
+...
